@@ -19,7 +19,8 @@ public class SQLActivity extends ListActivity {
     private OrganizerStorage datasource;
     @BindView(R.id.get_toWrite)
     EditText mEditText;
-
+    @BindView(R.id.date_toWrite)
+    EditText dateText1;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,8 @@ public class SQLActivity extends ListActivity {
         @SuppressWarnings("unchecked")
         ArrayAdapter<Note> adapter = (ArrayAdapter<Note>) getListAdapter();
         Note nt = null;
+        Note dt = null;
+
         switch (view.getId()) {
             case R.id.add:
 
@@ -51,12 +54,19 @@ public class SQLActivity extends ListActivity {
                 // save the new comment to the database
                 nt = datasource.createComment(mEditText.getText().toString());
                 adapter.add(nt);
+                dt = datasource.createDate(dateText1.getText().toString());
+                adapter.add(dt);
                 break;
             case R.id.delete:
                 if (getListAdapter().getCount() > 0) {
                     nt = (Note) getListAdapter().getItem(0);
                     datasource.deleteNote(nt);
                     adapter.remove(nt);
+                }
+                if (getListAdapter().getCount() > 0) {
+                    dt = (Note) getListAdapter().getItem(0);
+                    datasource.deleteNote(dt);
+                    adapter.remove(dt);
                 }
                 break;
         }

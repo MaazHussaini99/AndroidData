@@ -15,7 +15,7 @@ public class OrganizerStorage {
     private SQLiteDatabase database;
     private MySQLiteHelper dbHelper;
     private String[] allColumns = { MySQLiteHelper.COLUMN_ID,
-            MySQLiteHelper.COLUMN_COMMENT };
+            MySQLiteHelper.COLUMN_COMMENT, MySQLiteHelper.COLUMN_DATE };
 
     public OrganizerStorage(Context context) {
         dbHelper = new MySQLiteHelper(context);
@@ -48,12 +48,33 @@ public class OrganizerStorage {
         return newComment;
     }
 
+    public Note createDate(String date) {
+
+
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_DATE, date);
+
+        long insertId = database.insert(MySQLiteHelper.TABLE_COMMENTS, null,
+                values);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_COMMENTS,
+                allColumns, MySQLiteHelper.COLUMN_DATE + " = " + insertId, null,
+                null, null, null);
+
+        cursor.moveToFirst();
+        Note newComment = cursorToComment(cursor);
+        cursor.close();
+        return newComment;
+    }
+
     public void deleteNote(Note note) {
         long id = note.getId();
         System.out.println("Note deleted with id: " + id);
         database.delete(MySQLiteHelper.TABLE_COMMENTS, MySQLiteHelper.COLUMN_ID
                 + " = " + id, null);
     }
+
+
 
     public List<Note> getAllNotes() {
         List<Note> notes = new ArrayList<Note>();
@@ -78,4 +99,6 @@ public class OrganizerStorage {
         note.setNote(cursor.getString(1));
         return note;
     }
+
+
 }
